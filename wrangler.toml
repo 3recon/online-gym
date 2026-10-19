@@ -1,0 +1,18 @@
+# Cloudflare Worker 설정 — public 폴더를 사이트로 올리고, 하루 한 번 Supabase를 깨움
+# Cloudflare 대시보드에서 GitHub 저장소를 연결하면 main에 푸시할 때마다 `npx wrangler deploy`로 자동 배포됨
+name = "online-gym"
+main = "worker.js"
+compatibility_date = "2025-09-01"
+
+[assets]
+directory = "./public"
+binding = "ASSETS"
+
+[triggers]
+# 매일 03:00 (한국 시간). Cron은 UTC 기준이라 18:00
+crons = ["0 18 * * *"]
+
+[vars]
+# public/config.js에 넣는 값과 똑같이. anon 키는 원래 공개용이라 여기 적어도 됨
+SUPABASE_URL = ""
+SUPABASE_ANON_KEY = ""

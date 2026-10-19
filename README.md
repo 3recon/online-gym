@@ -22,7 +22,7 @@ http://localhost:3000 (포트는 `PORT` 환경변수로 변경)
 
 ## 배포
 
-무료 배포(Cloudflare Pages + Supabase)는 [DEPLOY.md](DEPLOY.md) 참고. 배포할 땐 `public` 폴더만 올리고, `public/config.js`에 Supabase 값을 넣으면 온라인 기능이 켜진다.
+무료 배포(Cloudflare Workers + Supabase)는 [DEPLOY.md](DEPLOY.md) 참고. GitHub `main`에 푸시하면 Cloudflare가 `public` 폴더를 자동으로 올리고, `public/config.js`에 Supabase 값을 넣으면 온라인 기능이 켜진다.
 
 ## 구조
 
@@ -37,7 +37,7 @@ http://localhost:3000 (포트는 `PORT` 환경변수로 변경)
 | `public/ads.js` | 광고 (config에 값이 있을 때만) |
 | `public/guide.html` 등 | 하는 법 · 소개 · 개인정보처리방침 |
 | `supabase/schema.sql` | Supabase에 한 번 붙여넣는 테이블·함수 (조작 방지 포함) |
-| `keepalive/` | Supabase가 잠들지 않게 하루 한 번 깨우는 Cloudflare Worker |
+| `wrangler.toml`, `worker.js` | Cloudflare 배포 설정. `public`을 사이트로 올리고, Supabase가 잠들지 않게 하루 한 번 깨움 |
 | `public/shared.js` | 닉네임 단어, 응원 문구 (서버와 같이 씀) |
 
 ## 메모

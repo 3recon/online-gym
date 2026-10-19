@@ -1,8 +1,9 @@
 # 배포하는 법 (전부 무료)
 
-구성: **Cloudflare Pages**(사이트) + **Supabase**(접속자·피드·순위) + **Cloudflare Worker**(Supabase가 잠들지 않게 하루 한 번 깨움)
+구성: **Cloudflare Worker**(사이트 + Supabase를 하루 한 번 깨우기) + **Supabase**(접속자·피드·순위)
 
-배포할 땐 `public` 폴더만 올리면 됩니다. `server.js`는 내 컴퓨터에서 테스트할 때만 씁니다.
+GitHub 저장소(`3recon/online-gym`)를 Cloudflare에 연결해 두면 `main`에 푸시할 때마다 자동으로 배포됩니다.
+사이트로 나가는 건 `public` 폴더뿐이고(`wrangler.toml` 설정), `server.js`는 내 컴퓨터에서 테스트할 때만 씁니다.
 
 ---
 
@@ -18,7 +19,10 @@
 3. **Project Settings → API Keys** (또는 Data API)에서 두 값을 복사
    - **Project URL** (예: `https://abcdefghijkl.supabase.co`)
    - **anon public** 키 (새 화면에서는 **publishable** 키라고 나올 수도 있음. 둘 다 됨)
-4. `public/config.js`의 `supabaseUrl`, `supabaseAnonKey`에 붙여넣기
+4. 같은 두 값을 두 군데에 붙여넣기
+   - `public/config.js`의 `supabaseUrl`, `supabaseAnonKey` (사이트용)
+   - `wrangler.toml`의 `SUPABASE_URL`, `SUPABASE_ANON_KEY` (하루 한 번 깨우기용)
+5. 커밋하고 푸시 → 자동 배포
 
 > **service_role 키(또는 secret 키)는 어디에도 넣지 마세요.** 이 프로젝트는 그 키가 필요 없습니다.
 
@@ -32,66 +36,36 @@ http://localhost:3000 을 브라우저 두 개로 열어서 한쪽에서 들면 
 
 ---
 
-## 2. Cloudflare Pages에 올리기
+## 2. Cloudflare에 GitHub 저장소 연결 (처음 한 번)
 
-### 가장 쉬운 방법: 드래그해서 올리기
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create → Import a repository**(GitHub 연결)
+2. `3recon/online-gym` 선택
+3. 설정
+   - 프로젝트 이름: `online-gym` (`wrangler.toml`의 `name`과 같아야 함)
+   - 빌드 명령: **비워 두기**
+   - 배포 명령: `npx wrangler deploy` (기본값 그대로)
+   - 경로: `/` (기본값 그대로)
+   - API 토큰: 새로 만들기 (자동)
+4. **배포** → `https://online-gym.<내 계정>.workers.dev` 주소가 나옴
 
-1. [dash.cloudflare.com](https://dash.cloudflare.com) 가입
-2. **Workers & Pages → Create → Pages → Upload assets**
-3. 프로젝트 이름 `online-gym` → **`public` 폴더를 통째로 끌어다 놓기** → **Deploy**
-4. `https://online-gym.pages.dev` 같은 주소가 나옴 (이름이 이미 있으면 뒤에 글자가 붙음)
-
-수정한 걸 다시 올릴 땐: 같은 프로젝트 → **Create deployment** → `public` 폴더 다시 끌어다 놓기
-
-### 명령어로 올리기 (선택)
-
-```powershell
-npx wrangler login
-```
-
-```powershell
-npx wrangler pages deploy public --project-name online-gym
-```
+이후엔 `main`에 푸시할 때마다 자동으로 다시 배포됩니다.
+Supabase 깨우기(매일 새벽 3시, 한국 시간)도 같은 Worker에 들어 있어서 따로 할 건 없습니다.
 
 ---
 
-## 3. 자동 깨우기 (Supabase 일시정지 방지)
-
-Supabase 무료는 일주일 동안 아무 요청이 없으면 잠듭니다. 하루 한 번 순위판을 불러서 깨워 두는 작업입니다.
-
-1. `keepalive/wrangler.toml`의 `SUPABASE_URL`, `SUPABASE_ANON_KEY`에 1번에서 복사한 값 넣기
-2. 배포
-
-```powershell
-cd keepalive
-```
-
-```powershell
-npx wrangler login
-```
-
-```powershell
-npx wrangler deploy
-```
-
-3. 확인: 배포 후 나오는 주소(`https://online-gym-keepalive.xxx.workers.dev`)를 열어서 `supabase ping: 200` 이 나오면 정상
-   매일 새벽 3시(한국 시간)에 자동으로 돌아갑니다.
-
----
-
-## 4. 올린 다음에 할 것
+## 3. 올린 다음에 할 것
 
 - [ ] **카톡 미리보기**: `public/index.html`의 `og:image`를 실제 주소로 (`https://내주소/og.png`)
-- [ ] **문의 이메일**: `public/about.html`, `public/privacy.html`의 노란 표시 부분에 이메일 주소
+- [ ] **문의 이메일**: `public/about.html`, `public/privacy.html`의 `TODO 이메일` 부분
 - [ ] **실제 폰으로 한글 입력 테스트**: 아이폰 사파리, 안드로이드 크롬
 
 ---
 
-## 5. 광고 붙이기 (나중에)
+## 4. 광고 붙이기 (나중에)
 
-1. **도메인 사기**: Cloudflare → Domain Registration (.com 1년 약 10달러)
-   → Pages 프로젝트 → **Custom domains** 에서 연결
-2. 4번의 이메일을 꼭 채운 상태로 [애드센스](https://adsense.google.com) 가입 → 사이트 추가
+1. 일단 무료 주소로 신청해 보고, 거절되면 **도메인 사기**: Cloudflare → Domain Registration (.com 1년 약 10달러)
+   → Worker 프로젝트 → **Settings → Domains & Routes** 에서 연결
+2. 3번의 이메일을 꼭 채운 상태로 [애드센스](https://adsense.google.com) 가입 → 사이트 추가
 3. 애드센스가 주는 확인 코드를 `public/index.html`의 `<head>`에 넣기 (자리 표시해 둠)
 4. 애드센스가 알려주는 내용으로 `public/ads.txt` 파일 만들기
 5. 승인되면 **광고 단위**(디스플레이, 반응형)를 두 개 만들고 `public/config.js`에 입력
@@ -108,8 +82,7 @@ npx wrangler deploy
 | 서비스 | 한도 | 넘치면 |
 |---|---|---|
 | Supabase | 실시간 동시 접속 약 200명, 메시지 월 약 200만 개, DB 500MB | 넘친 사람은 혼자 연습 모드로 (사이트는 안 죽음) |
-| Cloudflare Pages | 정적 파일 요청 무제한 | — |
-| Cloudflare Workers | 하루 10만 요청 (깨우기는 하루 1번) | — |
+| Cloudflare Workers | 정적 파일(`public`) 요청은 무제한, Worker 코드 실행은 하루 10만 번 (깨우기는 하루 1번) | — |
 
 ## 순위 조작 방지 (DB 함수 `gym_event`가 검사)
 
