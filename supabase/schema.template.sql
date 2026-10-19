@@ -63,6 +63,10 @@ alter table public.records_all enable row level security;
 alter table public.daily_stats enable row level security;
 alter table public.feed_items enable row level security;
 
+-- 프로젝트를 만들 때 "Automatically expose new tables"를 켰든 껐든 똑같이 되도록 직접 정함
+revoke all on public.players, public.records_daily, public.records_all, public.daily_stats, public.feed_items from anon, authenticated;
+grant select on public.feed_items to anon, authenticated;
+
 drop policy if exists "feed read" on public.feed_items;
 create policy "feed read" on public.feed_items for select to anon, authenticated using (true);
 
