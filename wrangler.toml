@@ -1,13 +1,11 @@
-# Cloudflare Worker 설정 — public 폴더를 사이트로 올리고, 하루 한 번 Supabase를 깨움
-# Cloudflare 대시보드에서 GitHub 저장소를 연결하면 main에 푸시할 때마다 `npx wrangler deploy`로 자동 배포됨
+# Cloudflare Worker 설정 — 하루 한 번 Supabase를 깨우는 일만 함
+# 사이트는 Cloudflare Pages(online-gym.pages.dev)가 public 폴더로 올림
+# 둘 다 GitHub 저장소에 연결돼 있어서 main에 푸시하면 각각 자동 배포됨
 name = "online-gym"
 main = "worker.js"
 compatibility_date = "2025-09-01"
-workers_dev = true   # https://online-gym.jch200325.workers.dev 주소 켜기
-
-[assets]
-directory = "./public"
-binding = "ASSETS"
+workers_dev = false    # 주소 없이 예약 작업만 (예전 online-gym.jch200325.workers.dev 끔)
+preview_urls = false
 
 [triggers]
 # 매일 03:00 (한국 시간). Cron은 UTC 기준이라 18:00

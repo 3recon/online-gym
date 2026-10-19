@@ -1,10 +1,6 @@
-// Cloudflare Worker
-// - 사이트: public 폴더의 파일은 Worker를 거치지 않고 바로 나감. 여기 fetch에는 없는 주소만 들어옴
-// - 깨우기: Supabase 무료 프로젝트는 일주일 동안 요청이 없으면 잠들어서, 하루 한 번 순위판을 불러 둠
+// Cloudflare Worker — Supabase 깨우기 전용 (사이트는 Cloudflare Pages가 public 폴더로 올림)
+// Supabase 무료 프로젝트는 일주일 동안 요청이 없으면 잠들어서, 하루 한 번 순위판을 불러 둠
 export default {
-  async fetch(request, env) {
-    return env.ASSETS.fetch(request);
-  },
   async scheduled(controller, env, ctx) {
     ctx.waitUntil(ping(env));
   },

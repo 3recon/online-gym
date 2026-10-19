@@ -1,9 +1,9 @@
 # 배포하는 법 (전부 무료)
 
-구성: **Cloudflare Worker**(사이트 + Supabase를 하루 한 번 깨우기) + **Supabase**(접속자·피드·순위)
+구성: **Cloudflare Pages**(사이트, https://online-gym.pages.dev) + **Cloudflare Worker**(Supabase를 하루 한 번 깨우기) + **Supabase**(접속자·피드·순위)
 
-GitHub 저장소(`3recon/online-gym`)를 Cloudflare에 연결해 두면 `main`에 푸시할 때마다 자동으로 배포됩니다.
-사이트로 나가는 건 `public` 폴더뿐이고(`wrangler.toml` 설정), `server.js`는 내 컴퓨터에서 테스트할 때만 씁니다.
+둘 다 GitHub 저장소(`3recon/online-gym`)에 연결돼 있어서 `main`에 푸시하면 각각 자동으로 배포됩니다.
+사이트로 나가는 건 `public` 폴더뿐이고, `server.js`는 내 컴퓨터에서 테스트할 때만 씁니다.
 
 ---
 
@@ -36,20 +36,22 @@ http://localhost:3000 을 브라우저 두 개로 열어서 한쪽에서 들면 
 
 ---
 
-## 2. Cloudflare에 GitHub 저장소 연결 (처음 한 번)
+## 2. Cloudflare에 GitHub 저장소 연결 (처음 한 번, 이미 해 둠)
 
-1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create → Import a repository**(GitHub 연결)
+### 사이트: Pages
+
+1. [dash.cloudflare.com](https://dash.cloudflare.com) → **Workers & Pages → Create → Pages** 탭 → **Git에 연결**
 2. `3recon/online-gym` 선택
-3. 설정
-   - 프로젝트 이름: `online-gym` (`wrangler.toml`의 `name`과 같아야 함)
-   - 빌드 명령: **비워 두기**
-   - 배포 명령: `npx wrangler deploy` (기본값 그대로)
-   - 경로: `/` (기본값 그대로)
-   - API 토큰: 새로 만들기 (자동)
-4. **배포** → `https://online-gym.<내 계정>.workers.dev` 주소가 나옴
+3. 프로젝트 이름 `online-gym`, 프레임워크 없음, 빌드 명령 **비워 두기**, 빌드 출력 디렉터리 **`public`**
+4. **저장 및 배포** → `https://online-gym.pages.dev`
 
-이후엔 `main`에 푸시할 때마다 자동으로 다시 배포됩니다.
-Supabase 깨우기(매일 새벽 3시, 한국 시간)도 같은 Worker에 들어 있어서 따로 할 건 없습니다.
+빌드 로그에 `wrangler.toml` 관련 경고가 나오는 건 무시해도 됩니다 (그 파일은 아래 Worker용).
+
+### Supabase 깨우기: Worker
+
+1. **Workers & Pages → Create → Import a repository** → `3recon/online-gym`
+2. 프로젝트 이름 `online-gym` (`wrangler.toml`의 `name`과 같아야 함), 빌드 명령 비워 두기, 배포 명령 `npx wrangler deploy`
+3. 매일 새벽 3시(한국 시간)에 `wrangler.toml`의 Supabase 주소로 요청을 한 번 보냄. 주소는 없음
 
 ---
 
@@ -64,7 +66,7 @@ Supabase 깨우기(매일 새벽 3시, 한국 시간)도 같은 Worker에 들어
 ## 4. 광고 붙이기 (나중에)
 
 1. 일단 무료 주소로 신청해 보고, 거절되면 **도메인 사기**: Cloudflare → Domain Registration (.com 1년 약 10달러)
-   → Worker 프로젝트 → **Settings → Domains & Routes** 에서 연결
+   → Pages 프로젝트 → **Custom domains** 에서 연결 (`og:url`, `og:image`도 새 주소로)
 2. 3번의 이메일을 꼭 채운 상태로 [애드센스](https://adsense.google.com) 가입 → 사이트 추가
 3. 애드센스가 주는 확인 코드를 `public/index.html`의 `<head>`에 넣기 (자리 표시해 둠)
 4. 애드센스가 알려주는 내용으로 `public/ads.txt` 파일 만들기
@@ -82,7 +84,8 @@ Supabase 깨우기(매일 새벽 3시, 한국 시간)도 같은 Worker에 들어
 | 서비스 | 한도 | 넘치면 |
 |---|---|---|
 | Supabase | 실시간 동시 접속 약 200명, 메시지 월 약 200만 개, DB 500MB | 넘친 사람은 혼자 연습 모드로 (사이트는 안 죽음) |
-| Cloudflare Workers | 정적 파일(`public`) 요청은 무제한, Worker 코드 실행은 하루 10만 번 (깨우기는 하루 1번) | — |
+| Cloudflare Pages | 정적 파일 요청 무제한, 빌드 월 500번 | — |
+| Cloudflare Workers | 하루 10만 요청 (깨우기는 하루 1번) | — |
 
 ## 순위 조작 방지 (DB 함수 `gym_event`가 검사)
 
