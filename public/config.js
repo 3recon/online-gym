@@ -4,8 +4,8 @@
  * - anon 키는 원래 브라우저에 공개되는 키라 여기 넣어도 됨. service_role 키는 절대 넣지 말 것
  */
 window.GYM_CONFIG = {
-  supabaseUrl: '',      // 예: https://abcdefghijkl.supabase.co
-  supabaseAnonKey: '',  // Supabase > Project Settings > API > anon public
+  supabaseUrl: 'https://ijmzzzmyokvpgfberxbx.supabase.co',      // 예: https://abcdefghijkl.supabase.co
+  supabaseAnonKey: 'sb_publishable_5JamHpc19YlFHi13o3t8PQ_pe9mt_iZ',  // Supabase > Project Settings > API > anon public
 
   // 애드센스 승인 받은 뒤에 채우기. 비어 있으면 광고 자리는 숨겨짐
   adsenseClient: '',    // 예: ca-pub-0000000000000000

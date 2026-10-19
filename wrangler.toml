@@ -13,5 +13,5 @@ crons = ["0 18 * * *"]
 
 [vars]
 # public/config.js에 넣는 값과 똑같이. anon 키는 원래 공개용이라 여기 적어도 됨
-SUPABASE_URL = ""
-SUPABASE_ANON_KEY = ""
+SUPABASE_URL = "https://ijmzzzmyokvpgfberxbx.supabase.co"
+SUPABASE_ANON_KEY = "sb_publishable_5JamHpc19YlFHi13o3t8PQ_pe9mt_iZ"
