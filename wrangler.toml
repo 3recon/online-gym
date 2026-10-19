@@ -3,6 +3,7 @@
 name = "online-gym"
 main = "worker.js"
 compatibility_date = "2025-09-01"
+workers_dev = true   # https://online-gym.jch200325.workers.dev 주소 켜기
 
 [assets]
 directory = "./public"

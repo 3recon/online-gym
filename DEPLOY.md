@@ -55,7 +55,7 @@ Supabase 깨우기(매일 새벽 3시, 한국 시간)도 같은 Worker에 들어
 
 ## 3. 올린 다음에 할 것
 
-- [ ] **카톡 미리보기**: `public/index.html`의 `og:image`를 실제 주소로 (`https://내주소/og.png`)
+- [x] **카톡 미리보기**: `public/index.html`의 `og:url`, `og:image`를 실제 주소로 (도메인을 바꾸면 다시)
 - [ ] **문의 이메일**: `public/about.html`, `public/privacy.html`의 `TODO 이메일` 부분
 - [ ] **실제 폰으로 한글 입력 테스트**: 아이폰 사파리, 안드로이드 크롬
 
